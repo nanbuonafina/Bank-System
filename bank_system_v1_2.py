@@ -61,7 +61,7 @@ def main():
     balance = 0.0
     statement = []
     counter = 0
-    max_withdrawals_operations = 3
+    max_transations_operations = 10
 
     print(f'Hi, {name}! Welcome to your bank system!')
     print()
@@ -76,13 +76,17 @@ def main():
         Type your choice: ''')
 
         if choice == '1':
-            balance, statement = deposit(balance, statement)
+            if counter < max_transations_operations:
+                balance, statement = deposit(balance, statement)
+                counter +=1
+            else:
+                print("Transaction limit exceeded.")
         elif choice == '2':
-            if counter < max_withdrawals_operations:
+            if counter < max_transations_operations:
                 balance, statement = withdraw(balance, statement)
                 counter +=1
             else:
-                print("Withdrawal limit exceeded.")
+                print("Transaction limit exceeded.")
         elif choice == '3':
             balance, statement = bank_statement(balance, statement)
         elif choice == '4':
