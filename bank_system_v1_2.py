@@ -1,4 +1,12 @@
 # SISTEMA BANCÁRIO > DEPÓSITOS, SAQUES E EXTRATO
+import datetime
+from time import strftime
+
+
+def get_log():
+    d = datetime.datetime.now() # take date and time now
+    formated_datetime = strftime("%y/%m/%d %H:%M")# format
+    return formated_datetime
 
 def get_positive_float(prompt):
     while True:
@@ -7,9 +15,9 @@ def get_positive_float(prompt):
             if value > 0:
                 return value
             else:
-                print('Por favor, insira valores acima de R$0.00')
+                print('Please, only type values above R$0.00')
         except ValueError:
-            print('Por favor, insira um númeor válido.')
+            print('Please, type a number valid.')
 
 def deposit(balance, statement):
     print('DEPOSIT OPERATION')
@@ -20,7 +28,8 @@ def deposit(balance, statement):
     if confirm_deposit.lower() == 'y':
         balance += deposit_value
         print('Deposit done.')
-        statement.append(f'Deposit: {deposit_value}')
+        log = get_log()
+        statement.append(f'Deposit: {deposit_value} at {log}')
     else:
         print("Operation denied.")   
 
@@ -35,8 +44,8 @@ def withdraw(balance, statement):
     if confirm_withdraw.lower() == 'y' and withdraw_value < balance:
         balance -= withdraw_value
         print('Successfully done!')
-
-        statement.append(f'Withdraw: {withdraw_value}')
+        log = get_log()
+        statement.append(f'Withdraw: {withdraw_value} at {log}')
     else:
         print('OPERATION DENIED')
 
