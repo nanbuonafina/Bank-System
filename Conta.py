@@ -1,10 +1,7 @@
-# 1. Criar uma classe Conta
-# Atributos -> Nome, número, saldo inicial = 0;
-# Métodos -> Fazer depósito, sacar, extrato e pegar os logs;
-
 import datetime
 from time import strftime
 
+# a classe utilidades contém o metodo get_log que registra todos as movimentações das contas
 class Utilities:
     def get_log(self):
         # Obtém a data e hora atuais
@@ -13,7 +10,6 @@ class Utilities:
         formated_datetime = strftime("%y/%m/%d %H:%M")
         return formated_datetime
 
-# classe
 class Conta:
     # construtor
     def __init__(self):
@@ -22,6 +18,7 @@ class Conta:
         self.statement = []
         self.utilities = Utilities()
 
+    # metodo deposit
     def deposit(self, value):
         deposit_value = value
         confirm_deposit = input(f"Are you sure that you want to deposit R${deposit_value}? (Y) Yes / Any other caracter to deny: ")
@@ -36,6 +33,7 @@ class Conta:
 
         return self._balance, self.statement
 
+    # metodo withdraw
     def withdraw(self, value):
         withdraw_value = value
         confirm_withdraw = input(f'Are you sure that you wanto to take R${withdraw_value}? (Y) Yes / Any other caracter to deny: ')
@@ -50,6 +48,7 @@ class Conta:
 
         return self._balance, self.statement
 
+    # metodo bank_statement
     def bank_statement(self):
         if not self.statement:
             print(f'Balance: R${self._balance}')
