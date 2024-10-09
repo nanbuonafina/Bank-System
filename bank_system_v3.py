@@ -1,118 +1,97 @@
-from Conta import Conta
 import datetime
-from time import strftime
 
-# pega os logs do sistema geral: criação de conta, troca e falhas
-def get_log():
-    # Obtém a data e hora atuais
-    d = datetime.datetime.now()
-    # Formata a data e hora
-    formated_datetime = strftime("%y/%m/%d %H:%M")
-    return formated_datetime
+class Utilities:
+    def get_log(self):
+        return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# facilita a verificação o input do usuário
-def get_positive_float(prompt):
-    # Loop para garantir que o usuário insira um valor positivo
-    while True:
-        try:
-            value = float(input(prompt))
-            if value > 0:
-                return value
-            else:
-                print('Please, only type values above R$0.00')
-        except ValueError:
-            print('Please, type a number valid.')
+class Conta:
+    def __init__(self, numero_conta):
+        self.numero_conta = numero_conta
+        self._saldo = 0
+        self.extrato = []
+        self.util = Utilities()
 
-contas = {} # armazena a relação: {id} : {Conta}
-system_logs = [] # armazena os logs relacionados a criação das contas
-
-# função para criar os objetos (contas) da classe Conta
-def create_account():
-    identifier = int(input('Type the id of your new account: '))
-    contas[identifier] = Conta()
-    print(f'Account {identifier} created')
-    log = get_log()
-    system_logs.append(f'Account {identifier} created at {log}')
-
-# função para o usuário trocar de conta
-def choose_account():
-    identifier = int(input('Type the account id: '))
-    if identifier in contas.keys():
-        log_1 = get_log()
-        system_logs.append(f'Account switched to {identifier} at {log_1}')
-        return contas[identifier]
-    else:
-        print('Not Found')
-        log_2 = get_log()
-        system_logs.append(f'Account Identifier Not Found at {log_2}')
-        return None
-
-
-def main():
-    while True:
-        choice = int(input('''---===<<< MENU >>>===---
-        (1) Create Account
-        (2) Select Account
-        (3) System Logs
-        (4) Exit
-
-        Type your choice: '''))
-
-        if choice == 1:
-            create_account()
-
-        elif choice == 2:
-            selected_account = choose_account()
-            if selected_account:
-                max_transations_operations = 3
-                counter = 0
-                while True:
-                    operation = input('''---===<<< OPERATIONS >>>===---
-                    (1) Deposit
-                    (2) Withdraw
-                    (3) Bank Statement
-                    (4) Back
-
-                    Type your choice: ''')
-
-                    if operation == '1':
-                        print('DEPOSIT OPERATION')
-                        if counter < max_transations_operations:
-                            value = get_positive_float('Value of Deposit: R$ ')
-                            selected_account.deposit(value)
-                            counter += 1
-                        else:
-                            print("Transaction limit exceeded.")
-
-                    elif operation == '2':
-                        print("WITHDRAW OPERATION")
-                        if counter < max_transations_operations:
-                            value = get_positive_float('Value of Withdraw: R$ ')
-                            selected_account.withdraw(value)
-                            counter += 1
-                        else:
-                            print("Transaction limit exceeded.")
-
-                    elif operation == '3':
-                        print('BANK STATEMENT')
-                        selected_account.bank_statement()
-
-                    elif operation == '4':
-                            print("Back to Main Menu")
-                            break
-                    else:
-                        print("Invalid choice. Please, try again using 1-4.")
-
-        elif choice == 3:
-            for i, item in enumerate(system_logs, start=1):
-                print(f'{i}. {item}')
-
-        elif choice == 4:
-            print("Saindo...")
-            break
-
+    def depositar(self, valor):
+        if valor > 0:
+            self._saldo += valor
+            log = f"{self.util.get_log()} - Depósito de R${valor:.2f}"
+            self.extrato.append(log)
+            print(f"Depósito de R${valor:.2f} realizado com sucesso.")
         else:
-            print("Invalid choice. Please, try again using 1-3.")
+            print("Valor inválido para depósito.")
+
+    def sacar(self, valor):
+        if 0 < valor <= self._saldo:
+            self._saldo -= valor
+            log = f"{self.util.get_log()} - Saque de R${valor:.2f}"
+            self.extrato.append(log)
+            print(f"Saque de R${valor:.2f} realizado com sucesso.")
+        else:
+            print("Saldo insuficiente ou valor inválido para saque.")
+
+    def mostrar_extrato(self):
+        print(f"Extrato da conta {self.numero_conta}:")
+        for log in self.extrato:
+            print(log)
+        print(f"Saldo atual: R${self._saldo:.2f}")
+
+class SistemaBancario:
+    def __init__(self):
+        self.contas = {}
+
+    def criar_conta(self):
+        numero_conta = input("Digite o número da nova conta: ")
+        if numero_conta not in self.contas:
+            self.contas[numero_conta] = Conta(numero_conta)
+            print(f"Conta {numero_conta} criada com sucesso.")
+        else:
+            print("Já existe uma conta com esse número.")
+
+    def buscar_conta(self, numero_conta):
+        return self.contas.get(numero_conta, None)
+
+    def menu(self):
+        while True:
+            print("\n==== Menu Banco ====")
+            print("1. Criar nova conta")
+            print("2. Depositar")
+            print("3. Sacar")
+            print("4. Mostrar extrato")
+            print("5. Sair")
+
+            opcao = input("Escolha uma opção: ")
+
+            if opcao == "1":
+                self.criar_conta()
+            elif opcao == "2":
+                numero_conta = input("Digite o número da conta: ")
+                conta = self.buscar_conta(numero_conta)
+                if conta:
+                    valor = float(input("Digite o valor para depósito: "))
+                    conta.depositar(valor)
+                else:
+                    print("Conta não encontrada.")
+            elif opcao == "3":
+                numero_conta = input("Digite o número da conta: ")
+                conta = self.buscar_conta(numero_conta)
+                if conta:
+                    valor = float(input("Digite o valor para saque: "))
+                    conta.sacar(valor)
+                else:
+                    print("Conta não encontrada.")
+            elif opcao == "4":
+                numero_conta = input("Digite o número da conta: ")
+                conta = self.buscar_conta(numero_conta)
+                if conta:
+                    conta.mostrar_extrato()
+                else:
+                    print("Conta não encontrada.")
+            elif opcao == "5":
+                print("Saindo do sistema bancário...")
+                break
+            else:
+                print("Opção inválida, tente novamente.")
 
 if __name__ == "__main__":
-    main()
+    sistema = SistemaBancario()
+    sistema.menu()
