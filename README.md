@@ -1,96 +1,67 @@
-# Sistema Bancário - Documentação
+# Sistema bancário em Python
 
-## Descrição do Projeto
-Este projeto implementa um sistema bancário utilizando os conceitos de **Programação Orientada a Objetos (POO)**. O sistema permite que os usuários criem contas bancárias, realizem depósitos, saques, alternem entre contas e obtenham o histórico de transações com registro de data e hora. O projeto é composto por classes que encapsulam o comportamento e os atributos das contas bancárias e o gerenciamento das operações.
+## Visão geral
 
----
+Este é um sistema bancário baseado em Python que permite aos usuários gerenciar várias contas. Ele foi projetado seguindo os princípios da Programação Orientada a Objetos (POO) e fornece recursos como depósitos, retiradas e registros de transações.
 
-## Funcionalidades Principais
+## Recursos
 
-### 1. Criar Conta Bancária
-- Os usuários podem criar novas contas bancárias.
-- Cada conta é identificada por um número único ou identificação.
-- As contas são armazenadas e podem ser acessadas para realizar operações.
+- Crie várias contas bancárias
+- Execute depósitos e retiradas
+- Rastreie todas as transações em um extrato de conta (extracto)
+- Sistema de registro para registrar cada operação com um registro de data e hora
 
-### 2. Depósito
-- O sistema permite que os usuários façam depósitos em suas contas.
-- O valor depositado é adicionado ao saldo da conta.
-- Cada transação de depósito é registrada no histórico da conta, com a data e hora exatas da operação.
+## Descrições de classe
 
-### 3. Saque
-- Os usuários podem realizar saques de suas contas, desde que o saldo seja suficiente.
-- O valor sacado é subtraído do saldo da conta.
-- Assim como os depósitos, os saques são registrados com data e hora no histórico da conta.
+### `Utilitários`
 
-### 4. Trocar de Conta
-- O usuário pode alternar entre diferentes contas bancárias, desde que a conta exista.
-- Ao trocar de conta, as operações subsequentes (depósitos, saques) serão aplicadas à conta ativa.
+Esta classe fornece funções de utilitário para o sistema bancário.
 
-### 5. Histórico de Transações
-- O sistema mantém um registro detalhado de todas as transações (depósitos e saques) realizadas em cada conta.
-- O histórico inclui a data, hora, tipo de operação (depósito ou saque) e o valor.
+#### Métodos:
+
+- **`get_log()`**: Retorna a data e a hora atuais como uma string no formato `AAAA-MM-DD HH:MM:SS`. Usado para registrar transações.
 
 ---
 
-## Estrutura das Classes
+### `Conta`
 
-### 1. Classe `Conta`
-A classe `Conta` representa uma conta bancária individual. Ela armazena informações como o número da conta, o saldo atual e o histórico de transações.
+Representa uma conta bancária com operações básicas, como depósitos, retiradas e visualização do saldo da conta e histórico de transações.
 
-**Atributos**:
-- `id_conta`: Identificador único da conta.
-- `saldo`: O saldo atual da conta.
-- `historico`: Um log de todas as transações realizadas na conta (depósitos e saques).
+#### Atributos:
 
-**Métodos**:
-- `depositar(valor)`: Realiza um depósito na conta e registra a transação no histórico.
-- `sacar(valor)`: Realiza um saque da conta, desde que haja saldo suficiente, e registra a transação no histórico.
-- `obter_historico()`: Retorna o histórico de todas as transações realizadas na conta.
-- `__str__()`: Exibe um resumo das informações da conta (ID e saldo).
+- **`numero_conta`**: Número da conta (string ou inteiro).
+- **`_saldo`**: Atributo privado que representa o saldo da conta.
+- **`extrato`**: Uma lista de logs de transações.
+- **`util`**: Uma instância da classe `Utilities` para gerar logs.
 
-### 2. Classe `SistemaBancario`
-A classe `SistemaBancario` gerencia as contas bancárias e as operações relacionadas, como criar uma nova conta, alternar entre contas e realizar operações.
+#### Métodos:
 
-**Atributos**:
-- `contas`: Um dicionário que armazena as contas bancárias, onde a chave é o `id_conta` e o valor é o objeto `Conta`.
-- `conta_atual`: A conta que está atualmente selecionada para realizar operações.
+- **`__init__(self, numero_conta)`**: Inicializa uma nova conta com o número de conta fornecido, define o saldo inicial como zero e prepara uma lista vazia para logs de transações.
 
-**Métodos**:
-- `criar_conta(id_conta)`: Cria uma nova conta com o `id_conta` especificado.
-- `trocar_conta(id_conta)`: Alterna para uma conta diferente, identificada pelo `id_conta`.
-- `depositar(valor)`: Realiza um depósito na conta atualmente ativa.
-- `sacar(valor)`: Realiza um saque da conta atualmente ativa.
-- `obter_historico_conta()`: Retorna o histórico de transações da conta atualmente ativa.
-- `__str__()`: Exibe um resumo das contas no sistema.
+- **`depositar(self, valor)`**: Deposita o valor fornecido na conta. Se o depósito for bem-sucedido, a transação será registrada com o registro de data e hora.
+
+- **`sacar(self, valor)`**: Retira o valor especificado da conta se o saldo for suficiente. Registra a transação com o registro de data e hora.
+
+- **`mostrar_saldo(self)`**: Exibe o saldo atual da conta.
+
+- **`ver_extrato(self)`**: Exibe o histórico completo de transações (extrato) da conta, mostrando todos os depósitos e retiradas com seus respectivos timestamps.
 
 ---
 
-## Exemplo de Uso
-
-Aqui está um exemplo de como usar o sistema bancário:
+## Exemplo de uso
 
 ```python
-# Criando o sistema bancário
-sistema = SistemaBancario()
+# Criar uma conta
+conta1 = Conta(numero_conta=12345)
 
-# Criando duas contas
-sistema.criar_conta(1)
-sistema.criar_conta(2)
+# Depositar na conta
+conta1.depositar(1000)
 
-# Trocando para a conta 1 e realizando operações
-sistema.trocar_conta(1)
-sistema.depositar(1000)
-sistema.sacar(200)
+# Sacar da conta
+conta1.sacar(200)
 
-# Trocando para a conta 2 e realizando operações
-sistema.trocar_conta(2)
-sistema.depositar(500)
-sistema.sacar(100)
+# Verificar saldo
+conta1.mostrar_saldo()
 
-# Obtendo histórico de transações da conta 1
-sistema.trocar_conta(1)
-print(sistema.obter_historico_conta())
-
-# Obtendo histórico de transações da conta 2
-sistema.trocar_conta(2)
-print(sistema.obter_historico_conta())
+# Ver histórico de transações
+conta1.ver_extrato()
